@@ -10,8 +10,8 @@ use std::io::{Read, Write};
 use std::os::unix::prelude::*;
 
 use consts::CID_BROADCAST;
-use platform::hidraw;
-use u2ftypes::U2FDevice;
+use platform::{hidraw, monitor};
+use u2ftypes::{U2FDevice, U2FDeviceInfo};
 use util::from_unix_result;
 
 #[derive(Debug)]
@@ -21,6 +21,7 @@ pub struct Device {
     in_rpt_size: usize,
     out_rpt_size: usize,
     cid: [u8; 4],
+    dev_info: Option<U2FDeviceInfo>,
 }
 
 impl Device {
@@ -35,6 +36,7 @@ impl Device {
             in_rpt_size,
             out_rpt_size,
             cid: CID_BROADCAST,
+            dev_info: None,
         })
     }
 
@@ -92,5 +94,19 @@ impl U2FDevice for Device {
 
     fn out_rpt_size(&self) -> usize {
         self.out_rpt_size
+    }
+
+    fn get_property(&self, prop_name: &str) -> io::Result<String> {
+        monitor::get_property_linux(&self.path, prop_name)
+    }
+
+    fn get_device_info(&self) -> U2FDeviceInfo {
+        // unwrap is okay, as dev_info must have already been set, else
+        // a programmer error
+        self.dev_info.clone().unwrap()
+    }
+
+    fn set_device_info(&mut self, dev_info: U2FDeviceInfo) {
+        self.dev_info = Some(dev_info);
     }
 }

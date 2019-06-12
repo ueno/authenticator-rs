@@ -13,13 +13,14 @@ use consts::CID_BROADCAST;
 use consts::MAX_HID_RPT_SIZE;
 use platform::fd::Fd;
 use platform::uhid;
-use u2ftypes::U2FDevice;
+use u2ftypes::{U2FDevice, U2FDeviceInfo};
 use util::io_err;
 
 #[derive(Debug)]
 pub struct Device {
     fd: Fd,
     cid: [u8; 4],
+    dev_info: Option<U2FDeviceInfo>,
 }
 
 impl Device {
@@ -27,6 +28,7 @@ impl Device {
         Ok(Self {
             fd,
             cid: CID_BROADCAST,
+            dev_info: None,
         })
     }
 
@@ -139,5 +141,19 @@ impl U2FDevice for Device {
 
     fn out_rpt_size(&self) -> usize {
         MAX_HID_RPT_SIZE
+    }
+
+    fn get_property(&self, _prop_name: &str) -> io::Result<String> {
+        Err(io::Error::new(io::ErrorKind::Other, "Not implemented"))
+    }
+
+    fn get_device_info(&self) -> U2FDeviceInfo {
+        // unwrap is okay, as dev_info must have already been set, else
+        // a programmer error
+        self.dev_info.clone().unwrap()
+    }
+
+    fn set_device_info(&mut self, dev_info: U2FDeviceInfo) {
+        self.dev_info = Some(dev_info);
     }
 }

@@ -50,4 +50,16 @@ impl U2FDevice for Device {
     fn out_rpt_size(&self) -> usize {
         panic!("not implemented");
     }
+
+    fn get_property(&self, prop_name: &str) -> io::Result<String> {
+        panic!("not implemented")
+    }
+
+    fn get_device_info(&self) -> U2FDeviceInfo {
+        panic!("not implemented")
+    }
+
+    fn set_device_info(&mut self, dev_info: U2FDeviceInfo) {
+        panic!("not implemented")
+    }
 }
