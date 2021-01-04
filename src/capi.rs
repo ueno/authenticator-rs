@@ -333,7 +333,7 @@ pub unsafe extern "C" fn rust_u2f_mgr_sign(
                 let mut bufs = HashMap::new();
                 bufs.insert(RESBUF_ID_KEYHANDLE, key_handle);
                 bufs.insert(RESBUF_ID_SIGNATURE, signature);
-                bufs.insert(RESBUF_ID_APPID, (*app_id).clone());
+                bufs.insert(RESBUF_ID_APPID, app_id.to_u2f());
                 bufs.insert(RESBUF_ID_VENDOR_NAME, dev_info.vendor_name);
                 bufs.insert(RESBUF_ID_DEVICE_NAME, dev_info.device_name);
                 bufs.insert(RESBUF_ID_FIRMWARE_MAJOR, vec![dev_info.version_major]);
